@@ -6,23 +6,26 @@ import org.ageseries.chatage.ChatAge.LOGGER
 import java.io.File
 
 object ChatAgeConfig {
-    private const val CONFIG_PATH: String = "confg/chat_age.yaml"
+    private val CONFIG_FILE: File = File("config/chat_age.yaml")
     var config: ChatAgeData = ChatAgeData()
 
     fun loadConfig() {
-        if(File(CONFIG_PATH).isFile) {
-            LOGGER.info("Reading from ${File(CONFIG_PATH).absoluteFile}")
-            config = Yaml.default.decodeFromStream(ChatAgeData.serializer(), File(CONFIG_PATH).inputStream())
+        if(CONFIG_FILE.isFile) {
+            LOGGER.info("Reading from ${CONFIG_FILE.absoluteFile}")
+            config = Yaml.default.decodeFromStream(ChatAgeData.serializer(), CONFIG_FILE.inputStream())
         } else {
             config = ChatAgeData()
             saveConfig()
         }
     }
 
-    fun saveConfig() {
-        LOGGER.info("Writing config to ${File(CONFIG_PATH).absoluteFile}")
+    private fun saveConfig() {
+        LOGGER.info("Writing config to ${CONFIG_FILE.absoluteFile}")
         val configText = Yaml.default.encodeToString(ChatAgeData.serializer(), config)
-        File(CONFIG_PATH).writeText(configText)
+        if (!CONFIG_FILE.exists()) {
+            CONFIG_FILE.createNewFile()
+        }
+        CONFIG_FILE.writeText(configText)
     }
 }
 
