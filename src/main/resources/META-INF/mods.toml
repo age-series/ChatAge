@@ -8,7 +8,7 @@ displayName="Chat Age"
 logoFile="chatage.png"
 authors="jrddunbr"
 description='''
-Chat Age.. Discord Webhooks!
+Chat Age - a Discord Webhook Integration mod for servers!
 '''
 
 [[dependencies.chatage]]

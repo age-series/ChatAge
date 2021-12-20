@@ -6,30 +6,29 @@ import net.minecraftforge.event.entity.player.PlayerEvent
 import net.minecraftforge.fml.IExtensionPoint
 import net.minecraftforge.fml.common.Mod
 import net.minecraftforge.network.NetworkConstants.IGNORESERVERONLY
-import org.apache.logging.log4j.LogManager
-import org.apache.logging.log4j.Logger
 import thedarkcolour.kotlinforforge.forge.DIST
 import thedarkcolour.kotlinforforge.forge.LOADING_CONTEXT
-import java.util.function.BiPredicate
 import java.util.function.Supplier
 
 @Mod(ChatAge.MODID)
 object ChatAge {
     const val MODID: String = "chatage"
-    val LOGGER: Logger = LogManager.getLogger()
 
     private fun chatEvent(event: ServerChatEvent) {
         LOGGER.info(event.player)
         LOGGER.info(event.username)
         LOGGER.info(event.message)
+        DiscordWebhook.discordWebhook(event.message, event.username)
     }
 
     private fun playerLogsIn(event: PlayerEvent.PlayerLoggedInEvent) {
-        LOGGER.info("Player ${event.player.name} joined")
+        LOGGER.info("Player ${event.player.name.contents} joined")
+        DiscordWebhook.discordWebhook("Player ${event.player.name.contents} joined")
     }
 
     private fun playerLogsOut(event: PlayerEvent.PlayerLoggedOutEvent) {
-        LOGGER.info("Player ${event.player.name} left")
+        LOGGER.info("Player ${event.player.name.contents} left")
+        DiscordWebhook.discordWebhook("Player ${event.player.name.contents} left")
     }
 
     init {

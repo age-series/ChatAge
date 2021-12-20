@@ -2,30 +2,29 @@ package org.ageseries.chatage
 
 import com.charleskorn.kaml.Yaml
 import kotlinx.serialization.Serializable
-import org.ageseries.chatage.ChatAge.LOGGER
 import java.io.File
 
 object ChatAgeConfig {
     private val CONFIG_FILE: File = File("config/chat_age.yaml")
     var config: ChatAgeData = ChatAgeData()
 
-    fun loadConfig() {
-        if(CONFIG_FILE.isFile) {
-            LOGGER.info("Reading from ${CONFIG_FILE.absoluteFile}")
-            config = Yaml.default.decodeFromStream(ChatAgeData.serializer(), CONFIG_FILE.inputStream())
+    fun loadConfig(configFile: File = CONFIG_FILE) {
+        if(configFile.isFile) {
+            LOGGER.info("Reading config from ${configFile.absoluteFile}")
+            config = Yaml.default.decodeFromStream(ChatAgeData.serializer(), configFile.inputStream())
         } else {
             config = ChatAgeData()
             saveConfig()
         }
     }
 
-    private fun saveConfig() {
-        LOGGER.info("Writing config to ${CONFIG_FILE.absoluteFile}")
+    private fun saveConfig(configFile: File = CONFIG_FILE) {
+        LOGGER.info("Writing config to ${configFile.absoluteFile}")
         val configText = Yaml.default.encodeToString(ChatAgeData.serializer(), config)
-        if (!CONFIG_FILE.exists()) {
-            CONFIG_FILE.createNewFile()
+        if (!configFile.exists()) {
+            configFile.createNewFile()
         }
-        CONFIG_FILE.writeText(configText)
+        configFile.writeText(configText)
     }
 }
 
@@ -37,5 +36,6 @@ object ChatAgeConfig {
  */
 @Serializable
 data class ChatAgeData(
-    val webhookUrl: String = ""
+    val webhookUrl: String = "",
+    val botName: String = "Chat Age Bot"
 )
