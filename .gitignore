@@ -18,6 +18,7 @@ options.txt
 */classes
 */obj/
 run/
+logs/
 
 # IntelliJ
 .idea
