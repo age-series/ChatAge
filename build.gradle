@@ -22,7 +22,7 @@ apply from: 'https://raw.githubusercontent.com/thedarkcolour/KotlinForForge/site
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 
-version = '1.0'
+version = '1.1'
 group = 'org.ageseries.chatage' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = 'chatage'
 

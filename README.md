@@ -2,14 +2,14 @@
 
 This is Chat Age. It is a Minecraft Mod for 1.18.1
 
-You put a Discord webhook into the config file and it mirrors your Minecraft
+You put a Discord webhook into the config file, and it mirrors your Minecraft
 chat messages into your Discord chat channel. Pretty simple and effective.
 
 This mod depends on Kotlin for Forge to be installed.
 
 ## Config File
 
-See `config/chat_age.yaml` for configuration options. A blank config will be
+See `config/chat_age.json` for configuration options. A blank config will be
 generated on first start of the server for you.
 
 ```json

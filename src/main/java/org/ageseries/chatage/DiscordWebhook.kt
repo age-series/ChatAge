@@ -1,6 +1,7 @@
 package org.ageseries.chatage
 
 import java.io.File
+import kotlin.concurrent.thread
 
 object DiscordWebhook {
 
@@ -48,21 +49,23 @@ object DiscordWebhook {
     }
     */
 
-    fun discordWebhook(message: String, username: String? = ChatAgeConfig.config.botName) {
-        val json = """
+    fun discordWebhook(message: String, username: String = ChatAgeConfig.config.botName) {
+        thread (name = "CA Discord Webhook Thread") {
+            val json = """
             {
-                "username": "$username",
-                "content": "$message"
+                "username": "${username.replace("\"", "")}",
+                "content": "${message.replace("\"", "")}"
             }
         """.trimIndent()
 
-        // Currently, not used because I need to come up with a logo to use and a CDN to provide it from.
-        // 'avatar_url': '${avatar_url}',
+            // Currently, not used because I need to come up with a logo to use and a CDN to provide it from.
+            // 'avatar_url': '${avatar_url}',
 
-        if (ChatAgeConfig.config.webhookUrl.isNotBlank())
-            httpsPost(ChatAgeConfig.config.webhookUrl, json)
-        else {
-            LOGGER.info("Error! Webhook URL must be defined in the config!")
+            if (ChatAgeConfig.config.webhookUrl.isNotBlank())
+                httpsPost(ChatAgeConfig.config.webhookUrl, json)
+            else {
+                LOGGER.error("[Chat Age] Webhook URL must be defined in the config.")
+            }
         }
     }
 }
