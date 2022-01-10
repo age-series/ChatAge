@@ -1,36 +1,20 @@
 package org.ageseries.chatage
 
+import org.apache.http.client.HttpClient
+import org.apache.http.client.methods.HttpPost
+import org.apache.http.entity.StringEntity
+import org.apache.http.impl.client.HttpClientBuilder
 import java.io.File
 import kotlin.concurrent.thread
+
+fun jsonSafe(s: String) = s.replace("\"", "")
 
 object DiscordWebhook {
 
     /**
      * @param url: Webhook URL
      * @param data: JSON formatted message data
-     *
-     * I hate that this uses CURL, but I want _something_ that works. I can't get shadow to work, so no libraries...
      */
-    private fun httpsPost(url: String, data: String) {
-        /*
-        curl -X POST -H "Content-Type: application/json" \
-    -d '{"name": "linuxize", "email": "linuxize@example.com"}' \
-    https://example/contact
-         */
-
-        val commandList = listOf("curl", "-X", "POST", "-H", "Content-Type: application/json", "-d", data, url)
-        try {
-            val processBuilder = ProcessBuilder(commandList)
-            val process = processBuilder.start()
-            process.waitFor()
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-    }
-
-    /*
-    TODO: Uncomment this function and delete the above one once we have shadow working.
-
     private fun httpsPost(url: String, data: String) {
         LOGGER.debug("Sending HTTPS Post request to $url:\n$data")
         val httpClient: HttpClient = HttpClientBuilder.create().build()
@@ -47,23 +31,24 @@ object DiscordWebhook {
             e.printStackTrace()
         }
     }
-    */
 
     fun discordWebhook(message: String, username: String = ChatAgeConfig.config.botName) {
         thread (name = "CA Discord Webhook Thread") {
+            var avatar = ""
+            if(ChatAgeConfig.config.avatarUrl.isNotBlank()) {
+                avatar = ", \"avatar_url\": \"${jsonSafe(ChatAgeConfig.config.avatarUrl)}\""
+            }
             val json = """
             {
-                "username": "${username.replace("\"", "")}",
-                "content": "${message.replace("\"", "")}"
+                "username": "${jsonSafe(username)}",
+                "content": "${jsonSafe(message)}"
+                $avatar
             }
         """.trimIndent()
 
-            // Currently, not used because I need to come up with a logo to use and a CDN to provide it from.
-            // 'avatar_url': '${avatar_url}',
-
-            if (ChatAgeConfig.config.webhookUrl.isNotBlank())
+            if (ChatAgeConfig.config.webhookUrl.isNotBlank()) {
                 httpsPost(ChatAgeConfig.config.webhookUrl, json)
-            else {
+            } else {
                 LOGGER.error("[Chat Age] Webhook URL must be defined in the config.")
             }
         }

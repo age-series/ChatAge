@@ -48,5 +48,6 @@ object ChatAgeConfig {
 @Serializable
 data class ChatAgeData(
     val webhookUrl: String = "",
-    val botName: String = "Chat Age Bot"
+    val botName: String = "Chat Age Bot",
+    val avatarUrl: String = ""
 )

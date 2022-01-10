@@ -15,12 +15,15 @@ generated on first start of the server for you.
 ```json
 {
     "webhookUrl": "https://discord.com/api/webhooks/###/###",
-    "botName": "Your Cool Bot Name"
+    "botName": "Your Cool Bot Name",
+    "avatarUrl": "https://cdn.discordapp.com/avatars/150415367439646720/44ae51926c0f909b0c6ef55522b33b81.webp"
 }
 ```
 
 I've redacted my webhook token data but the `###` sections would contain
-alphanumeric characters.
+alphanumeric characters. `avatarUrl` is omitted if it's empty (it'll use the
+Discord default); it need not refer to Discord's CDN, any publicly-hosted image
+file of the right type should do.
 
 ## Getting a Discord Webhook URL
 

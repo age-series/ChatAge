@@ -3,9 +3,12 @@ package org.ageseries.chatage
 import net.minecraftforge.common.MinecraftForge.EVENT_BUS
 import net.minecraftforge.event.ServerChatEvent
 import net.minecraftforge.event.entity.player.PlayerEvent
+import net.minecraftforge.event.server.ServerAboutToStartEvent
+import net.minecraftforge.event.server.ServerStoppedEvent
 import net.minecraftforge.fml.IExtensionPoint
 import net.minecraftforge.fml.common.Mod
 import net.minecraftforge.network.NetworkConstants.IGNORESERVERONLY
+import org.spongepowered.asm.mixin.MixinEnvironment
 import thedarkcolour.kotlinforforge.forge.DIST
 import thedarkcolour.kotlinforforge.forge.LOADING_CONTEXT
 import java.util.function.Supplier
@@ -27,13 +30,16 @@ object ChatAge {
         DiscordWebhook.discordWebhook("Player ${event.player.name.contents} left")
     }
 
-    init {
-        if (DIST.isDedicatedServer) {
-            EVENT_BUS.addListener {event: ServerChatEvent -> chatEvent(event)}
-            EVENT_BUS.addListener {event: PlayerEvent.PlayerLoggedInEvent -> playerLogsIn(event)}
-            EVENT_BUS.addListener {event: PlayerEvent.PlayerLoggedOutEvent -> playerLogsOut(event)}
-            EVENT_BUS.register(this)
-            thread (name = "CA Config Loader Thread"){ ChatAgeConfig.loadConfig() }
+    private var first_reg = true
+
+    private fun registerListeners(event: ServerAboutToStartEvent) {
+        LOGGER.info("ChatAge loading...")
+        thread (name = "ChatAge Config Loader Thread"){ ChatAgeConfig.loadConfig() }
+
+        if(first_reg) {
+            EVENT_BUS.addListener(::chatEvent)
+            EVENT_BUS.addListener(::playerLogsIn)
+            EVENT_BUS.addListener(::playerLogsOut)
 
             val extension = Supplier<IExtensionPoint.DisplayTest>(
                 fun(): IExtensionPoint.DisplayTest = IExtensionPoint.DisplayTest(
@@ -45,6 +51,13 @@ object ChatAge {
                 IExtensionPoint.DisplayTest::class.java,
                 extension
             )
+            first_reg = false
         }
+        LOGGER.info("ChatAge extensions registered.")
+    }
+
+    init {
+        EVENT_BUS.register(this)
+        EVENT_BUS.addListener(::registerListeners)
     }
 }
