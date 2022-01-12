@@ -84,7 +84,9 @@ minecraft {
 
 configurations {
     library
+	shade
     implementation.extendsFrom library
+    shadow.extendsFrom library
 }
 
 minecraft.runs.all {
@@ -112,7 +114,8 @@ dependencies {
     implementation 'thedarkcolour:kotlinforforge:1.14.0'
     //library 'org.jetbrains:annotations:22.0.0'
     // Chat Age 1.1 - get YAML configs working
-    //library 'com.charleskorn.kaml:kaml:0.38.0'
+    library 'com.charleskorn.kaml:kaml:0.38.0'
+    shade 'com.charleskorn.kaml:kaml:0.38.0'
 
     // Real mod deobf dependency examples - these get remapped to your current mappings
     // compileOnly fg.deobf("mezz.jei:jei-${mc_version}:${jei_version}:api") // Adds JEI API as a compile dependency
@@ -136,6 +139,36 @@ jar {
         ])
     }
 }
+
+// Do shadow relocations
+// (I can't figure out how to do this in a manual, sensible way, so--for
+// now--you will have to hunt down these dependencies manually and iteratively.
+// Sorry!  - Grissess)
+def shaded = [
+    "com.charleskorn.kaml",
+	"org.snakeyaml",
+].stream().collect()
+
+shadowJar {
+    dependencies {
+        exclude(dependency {
+            def res = !shaded.contains(it.moduleGroup)
+            if(!res) println("Include: $it")
+			else println("Exclude: $it")
+            res
+        })
+    }
+	shaded.forEach {
+		relocate it, "org.ageseries.shadow" + it
+	}
+}
+
+reobf {
+    shadowJar { }
+}
+tasks.build.dependsOn reobfShadowJar
+jar.finalizedBy 'reobfShadowJar'
+shadowJar.finalizedBy 'reobfShadowJar'
 
 // This is the preferred method to reobfuscate your jar file
 jar.finalizedBy('reobfJar')

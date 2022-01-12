@@ -9,15 +9,13 @@ This mod depends on Kotlin for Forge to be installed.
 
 ## Config File
 
-See `config/chat_age.json` for configuration options. A blank config will be
+See `config/chat_age.yaml` for configuration options. A blank config will be
 generated on first start of the server for you.
 
-```json
-{
-    "webhookUrl": "https://discord.com/api/webhooks/###/###",
-    "botName": "Your Cool Bot Name",
-    "avatarUrl": "https://cdn.discordapp.com/avatars/150415367439646720/44ae51926c0f909b0c6ef55522b33b81.webp"
-}
+```yaml
+webhookUrl: https://discord.com/api/webhooks/###/###
+botName: Your Cool Bot Name
+avatarUrl: https://cdn.discordapp.com/avatars/150415367439646720/44ae51926c0f909b0c6ef55522b33b81.webp
 ```
 
 I've redacted my webhook token data but the `###` sections would contain
