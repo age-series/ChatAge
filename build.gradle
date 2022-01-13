@@ -144,6 +144,7 @@ jar {
 // Do shadow relocations
 // (I can't figure out how to do this in an automatic, sensible way, so--for
 // now--you will have to hunt down these dependencies manually and iteratively.
+// Let ./gradlew dependencies be your guide, and/or the printlns below.
 // Sorry!  - Grissess)
 def shaded = [
     "com.charleskorn.kaml",
