@@ -84,7 +84,6 @@ minecraft {
 
 configurations {
     library
-	shade
     implementation.extendsFrom library
     shadow.extendsFrom library
 }
@@ -112,10 +111,12 @@ repositories {
 dependencies {
     minecraft 'net.minecraftforge:forge:1.18-38.0.16'
     implementation 'thedarkcolour:kotlinforforge:1.14.0'
-    //library 'org.jetbrains:annotations:22.0.0'
+	// Leave this here, even if not used directly--otherwise runClient fails
+	// because dependencies pull in different (unshadowed) versions. (I'm not
+	// otherwise sure why this fixes anything.)  - Grissess
+    library 'org.jetbrains:annotations:23.0.0'
     // Chat Age 1.1 - get YAML configs working
     library 'com.charleskorn.kaml:kaml:0.38.0'
-    shade 'com.charleskorn.kaml:kaml:0.38.0'
 
     // Real mod deobf dependency examples - these get remapped to your current mappings
     // compileOnly fg.deobf("mezz.jei:jei-${mc_version}:${jei_version}:api") // Adds JEI API as a compile dependency
@@ -141,7 +142,7 @@ jar {
 }
 
 // Do shadow relocations
-// (I can't figure out how to do this in a manual, sensible way, so--for
+// (I can't figure out how to do this in an automatic, sensible way, so--for
 // now--you will have to hunt down these dependencies manually and iteratively.
 // Sorry!  - Grissess)
 def shaded = [
